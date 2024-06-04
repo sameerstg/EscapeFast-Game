@@ -1,92 +1,41 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Security.Cryptography;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float horizontalChange;
-    public float speed;
+    public Car car;
     public InputSystem input;
+    public float steerAmount;
+
     Rigidbody rb;
-    public HorizontalPosition horizontalPosition;
-    public bool canMove;
     private void Awake()
     {
         input = new();
         rb = GetComponent<Rigidbody>();
     }
-    private void Start()
-    {
-        horizontalPosition = HorizontalPosition.middle;
-        canMove = true;
-    }
     private void OnEnable()
     {
         input.Enable();
-        input.ActionMap.Left.started += Left;
-        input.ActionMap.Right.started += Right;
-        
+        input.ActionMap.MouseDelta.started += ChangePosition;
+
     }
+
+    private void ChangePosition(UnityEngine.InputSystem.InputAction.CallbackContext context)
+    {
+        steerAmount += context.ReadValue<Vector2>().x;
+    }
+
+
     private void Update()
     {
-        //rb.AddForce(Vector3.forward * 1000);
-        rb.velocity = Vector3.forward * speed;
-    }
-    private void Right(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        if (!canMove)
-        {
-            return;
-        }
-        if (horizontalPosition == HorizontalPosition.middle)
-        {
-            horizontalPosition = HorizontalPosition.right;
-        }
-        else if (horizontalPosition == HorizontalPosition.left)
-        {
-            horizontalPosition = HorizontalPosition.middle;
 
-        }
-        else
-        {
-            return;
-        }
-        ChangeHorizontalPosition(Vector3.right * horizontalChange);
+        car.variation = car.GetChange(1, steerAmount);
+        rb.velocity = car.variation;
+
     }
 
-    private void Left(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        if (!canMove)
-        {
-            return;
-        }
-        if (horizontalPosition == HorizontalPosition.middle)
-        {
-            horizontalPosition = HorizontalPosition.left;
-        }
-        else if (horizontalPosition == HorizontalPosition.right)
-        {
-            horizontalPosition = HorizontalPosition.middle;
-
-        }
-        else
-        {
-            return;
-        }
-        ChangeHorizontalPosition(Vector3.left * horizontalChange);
-    }
-
-    public void ChangeHorizontalPosition(Vector3 change)
-    {
-        canMove = false;
-        iTween.MoveAdd(gameObject,iTween.Hash("time",0.3f,"amount",change, "oncomplete",nameof(OnMoveComplete)));
-        //transform.position += change;
-    }
-    void OnMoveComplete()
-    {
-        canMove = true;
-    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("PlatTrigger"))
@@ -96,7 +45,28 @@ public class Player : MonoBehaviour
     }
 
 }
-public enum HorizontalPosition
+[Serializable]
+public class Car
 {
-    middle,left,right
+    public string name;
+    public float forwardAcceleration = 1;
+    public float speed = 10;
+    public float turnSpeed = 20;
+    public Vector3 variation;
+
+    public float GetHorizontalVariation(float steerAmount)
+    {
+        return steerAmount * Time.deltaTime * turnSpeed;
+    }
+    public float GetForwardVariation(float accelerator)
+    {
+        forwardAcceleration += Time.deltaTime * 0.5f;
+        var val = accelerator * forwardAcceleration * speed * Time.deltaTime;
+        return val;
+    }
+    public Vector3 GetChange(float accelerator, float steerAmount)
+    {
+        return new Vector3(GetHorizontalVariation(steerAmount), 0, GetForwardVariation(accelerator));
+    }
+
 }
