@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,13 +13,9 @@ public class PlayerController : MonoBehaviour
     public float acceleration = 0.1f;       // Rate at which forward speed increases
     private bool isMoving = false;
 
-    public PlayerPosition playerPosition = PlayerPosition.Middle;
-    public enum PlayerPosition
-    {
-        Left,
-        Middle,
-        Right
-    }
+    public PlayerState playerPosition = PlayerState.Middle;
+    public event Action<PlayerState> OnPlayerStateChange;  // Event to notify about state changes
+
 
     private void Awake()
     {
@@ -38,16 +36,19 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // Gradually increase the forward speed over time for natural acceleration
         forwardSpeed += acceleration * Time.deltaTime;
-
-        // Move the player forward based on the current speed
         transform.Translate(Vector3.forward * forwardSpeed * Time.deltaTime);
+    }
+
+    void ChangePlayerState(PlayerState newState)
+    {
+        playerPosition = newState;
+        OnPlayerStateChange?.Invoke(playerPosition);  // Trigger event
     }
 
     private void OnSwipe(UnityEngine.InputSystem.InputAction.CallbackContext context)
     {
-        if (isMoving) return;  // Ignore input if already moving
+        if (isMoving) return;
 
         Vector2 swipeValue = context.ReadValue<Vector2>();
         Vector2 direction = GetDirection(swipeValue);
@@ -58,7 +59,12 @@ public class PlayerController : MonoBehaviour
     {
         if (direction == Vector2.up)
         {
+            ChangePlayerState(PlayerState.Up);
             Jump();
+        }
+        else if (direction == Vector2.down)
+        {
+            ChangePlayerState(PlayerState.Down);
         }
         else if (direction == Vector2.left || direction == Vector2.right)
         {
@@ -76,6 +82,7 @@ public class PlayerController : MonoBehaviour
             {
                 LeanTween.moveY(gameObject, startY, 0.3f).setOnComplete(() =>
                 {
+                    ChangePlayerState(PlayerState.Middle);
                     isMoving = false;
                 });
             });
@@ -84,37 +91,35 @@ public class PlayerController : MonoBehaviour
 
     void SwitchLane(Vector2 direction)
     {
-        if (direction == Vector2.left && playerPosition != PlayerPosition.Left)
+        if (direction == Vector2.left && playerPosition != PlayerState.Left)
         {
-            // Move left only if not already at the leftmost lane
-            MoveToLane(playerPosition == PlayerPosition.Middle ? PlayerPosition.Left : PlayerPosition.Middle);
+            MoveToLane(playerPosition == PlayerState.Middle ? PlayerState.Left : PlayerState.Middle);
         }
-        else if (direction == Vector2.right && playerPosition != PlayerPosition.Right)
+        else if (direction == Vector2.right && playerPosition != PlayerState.Right)
         {
-            // Move right only if not already at the rightmost lane
-            MoveToLane(playerPosition == PlayerPosition.Middle ? PlayerPosition.Right : PlayerPosition.Middle);
+            MoveToLane(playerPosition == PlayerState.Middle ? PlayerState.Right : PlayerState.Middle);
         }
     }
 
-    void MoveToLane(PlayerPosition targetLane)
+    void MoveToLane(PlayerState targetLane)
     {
         isMoving = true;
         float targetX = 0;
 
-        if (targetLane == PlayerPosition.Left)
+        if (targetLane == PlayerState.Left)
         {
             targetX = -laneDelta;
-            playerPosition = PlayerPosition.Left;
+            ChangePlayerState(PlayerState.Left);
         }
-        else if (targetLane == PlayerPosition.Right)
+        else if (targetLane == PlayerState.Right)
         {
             targetX = laneDelta;
-            playerPosition = PlayerPosition.Right;
+            ChangePlayerState(PlayerState.Right);
         }
         else
         {
-            targetX = 0;  // Middle lane
-            playerPosition = PlayerPosition.Middle;
+            targetX = 0;
+            ChangePlayerState(PlayerState.Middle);
         }
 
         LeanTween.moveX(gameObject, targetX, 0.3f).setOnComplete(() =>
@@ -143,3 +148,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 }
+
+    public enum PlayerState
+    {
+        Left,
+        Middle,
+        Right,
+        Up,
+        Down
+    }
