@@ -6,43 +6,7 @@
             "id": "f5a848aa-aad4-4e12-b9fc-1be4b2b0756b",
             "actions": [
                 {
-                    "name": "Left",
-                    "type": "Button",
-                    "id": "2bcf1ec1-289b-43b9-98ab-100ea32420e3",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Right",
-                    "type": "Button",
-                    "id": "6e9b9172-e176-4c61-8acd-8d4e068476f5",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Jump",
-                    "type": "Button",
-                    "id": "982b5a8b-e309-4748-ba7c-607116ad0f7d",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Slide",
-                    "type": "Button",
-                    "id": "b17bad7b-a376-40e3-b49c-553b5f28cafd",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "MouseDelta",
+                    "name": "Swipe",
                     "type": "Value",
                     "id": "fd188735-06f6-461f-aa87-7fa5e376d178",
                     "expectedControlType": "Vector2",
@@ -54,56 +18,12 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "854e2ca5-78c1-4b12-9dca-c4d9c009f8eb",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Left",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "959e1f1e-a364-42ee-b931-0ced646cd63d",
-                    "path": "<Keyboard>/d",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Right",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "a647ebdb-b5a4-4509-bb18-effbf5ec85f4",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b899c725-1eb7-43c1-a9d6-cfd3cdd361d4",
-                    "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Slide",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "f811c249-3cb5-42a9-b941-cef70caed961",
-                    "path": "<Mouse>/delta",
+                    "path": "<Touchscreen>/delta",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MouseDelta",
+                    "action": "Swipe",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

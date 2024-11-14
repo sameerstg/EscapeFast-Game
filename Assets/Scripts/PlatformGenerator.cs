@@ -36,7 +36,7 @@ public class PlatformGenerator : MonoBehaviour
             generatedPlatforms.Add(Instantiate(platformsPrefabs[Random.Range(0, platformsPrefabs.Count)], GetLastPlatformEndPosition(), Quaternion.identity,transform));
             if(generatedPlatforms.Count != 1)
             {
-                generatedPlatforms[^1].GetComponent<Platform>().GenerateObstacle();
+                //generatedPlatforms[^1].GetComponent<Platform>().GenerateObstacle();
             }
         }
     }
@@ -44,7 +44,7 @@ public class PlatformGenerator : MonoBehaviour
     {
         if (generatedPlatforms.Count == 0)
         {
-            return new Vector3();
+            return new Vector3()+Vector3.back*20;
         }
         else
         {

@@ -278,8 +278,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   obstacles:
-  - {fileID: 1535720317940416104}
-  - {fileID: 5262088156791905691}
+  - {fileID: 7437465624665501784}
+  - {fileID: 7437465624665501784}
 --- !u!1 &7437465624799788985
 GameObject:
   m_ObjectHideFlags: 0
